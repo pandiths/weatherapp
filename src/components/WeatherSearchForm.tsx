@@ -133,10 +133,7 @@ const WeatherSearchForm: React.FC<WeatherSearchFormProps> = ({
   };
 
   const handleReset = () => {
-    setFormData({ street: "", city: "", state: "" });
-    setErrors({ city: false, street: false, state: false });
-    setCurrentLocationEnabled(false);
-    onLocationFetch("", "");
+    window.location.reload();
   };
 
   return (
