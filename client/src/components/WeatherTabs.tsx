@@ -16,28 +16,48 @@ interface WeatherData {
   cloudCover: string;
 }
 
+interface FavoriteData {
+  cityName: string;
+  region: string;
+  coordinates: { latitude: string; longitude: string } | null; // Added coordinates
+  data: WeatherData[];
+}
+
 interface WeatherTabsProps {
   weatherData: WeatherData[];
+  favorites: FavoriteData[];
   coordinates?: { latitude: string; longitude: string } | null;
   onDateClick: (data: WeatherData) => void;
-  onFavoriteClick: () => void;
+  onFavoriteClick: (
+    cityName: string,
+    region: string,
+    coordinates?: { latitude: string; longitude: string } | null
+  ) => void;
+  onRemoveFavorite: (
+    cityName: string,
+    region: string,
+    coordinates?: { latitude: string; longitude: string } | null
+  ) => void;
 }
 
 const WeatherTabs: React.FC<WeatherTabsProps> = ({
   weatherData,
+  favorites,
   coordinates,
   onDateClick,
   onFavoriteClick,
+  onRemoveFavorite,
 }) => {
   const [selectedData, setSelectedData] = useState<WeatherData | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [hideTable, setHideTable] = useState(false);
   const [cityName, setCityName] = useState<string>("");
+  const [regionName, setRegionName] = useState<string>("");
 
   useEffect(() => {
-    const fetchCityName = async () => {
+    const fetchCityAndRegionName = async () => {
       if (coordinates) {
-        const apiKey = "YOUR_GOOGLE_MAPS_API_KEY";
+        const apiKey = "AIzaSyD9SRVSolqPEYTy7s4fCYSTLw7wbZMEz6M"; // replace with your actual API key
         const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinates.latitude},${coordinates.longitude}&key=${apiKey}`;
 
         try {
@@ -45,22 +65,48 @@ const WeatherTabs: React.FC<WeatherTabsProps> = ({
           const data = await response.json();
           if (data.results.length > 0) {
             const addressComponents = data.results[0].address_components;
+
             const cityComponent = addressComponents.find((component: any) =>
               component.types.includes("locality")
             );
-            if (cityComponent) {
-              setCityName(cityComponent.long_name);
-            } else {
-              setCityName("City Not Found");
-            }
+            setCityName(
+              cityComponent ? cityComponent.long_name : "City Not Found"
+            );
+
+            const regionComponent = addressComponents.find((component: any) =>
+              component.types.includes("administrative_area_level_1")
+            );
+            setRegionName(
+              regionComponent ? regionComponent.long_name : "Region Not Found"
+            );
           }
         } catch (error) {
-          console.error("Error fetching city name:", error);
+          console.error("Error fetching city and region name:", error);
         }
       }
     };
-    fetchCityName();
+    fetchCityAndRegionName();
   }, [coordinates]);
+
+  const isFavorite = favorites.some(
+    (fav) =>
+      fav.cityName.toLowerCase() === cityName.toLowerCase() &&
+      fav.region.toLowerCase() === regionName.toLowerCase() &&
+      JSON.stringify(fav.coordinates) === JSON.stringify(coordinates)
+  );
+
+  const hideDetailsTab = () => {
+    setShowDetails(false);
+    setHideTable(false);
+  };
+
+  const handleFavoriteClick = () => {
+    if (isFavorite) {
+      onRemoveFavorite(cityName, regionName, coordinates); // Pass coordinates when removing a favorite
+    } else {
+      onFavoriteClick(cityName, regionName, coordinates); // Pass coordinates when adding a favorite
+    }
+  };
 
   const handleMoreDetailsClick = () => {
     if (!selectedData && weatherData.length > 0) {
@@ -68,31 +114,33 @@ const WeatherTabs: React.FC<WeatherTabsProps> = ({
       onDateClick(weatherData[0]);
     }
     setShowDetails(true);
-    setTimeout(() => setHideTable(true), 300); // Hide table after the transition
+    setTimeout(() => setHideTable(true), 300);
   };
 
   const handleRowClick = (data: WeatherData) => {
     setSelectedData(data);
     onDateClick(data);
     setShowDetails(true);
-    setTimeout(() => setHideTable(true), 300); // Hide table after the transition
+    setTimeout(() => setHideTable(true), 300);
   };
 
   const handleBackToList = () => {
     setShowDetails(false);
-    setHideTable(false); // Reset table visibility when going back
+    setHideTable(false);
   };
 
   return (
-    <Container className={`mt-4 container-slide ${showDetails ? "show-details" : ""}`}>
+    <Container
+      className={`mt-4 container-slide ${showDetails ? "show-details" : ""}`}
+    >
       <div className={`tab-content ${hideTable ? "hidden" : ""}`}>
         <h3 className="mb-3">
-          Weather Forecast {cityName ? `for ${cityName}` : ""}
+          Weather Forecast {cityName ? `for ${cityName}, ${regionName}` : ""}
         </h3>
         <Row className="mb-3">
           <Col xs="auto">
-            <Button variant="primary" onClick={onFavoriteClick}>
-              Favorite
+            <Button variant="primary" onClick={handleFavoriteClick}>
+              {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
             </Button>
           </Col>
           <Col xs="auto">
@@ -101,7 +149,7 @@ const WeatherTabs: React.FC<WeatherTabsProps> = ({
             </Button>
           </Col>
         </Row>
-    
+
         <Tabs defaultActiveKey="dayView" id="weather-tabs" className="mt-3">
           <Tab eventKey="dayView" title="Day View">
             <Table striped bordered hover responsive>
@@ -120,7 +168,10 @@ const WeatherTabs: React.FC<WeatherTabsProps> = ({
                   <tr key={index} onClick={() => handleRowClick(data)}>
                     <td>{index + 1}</td>
                     <td>
-                      <Button variant="link" onClick={() => handleRowClick(data)}>
+                      <Button
+                        variant="link"
+                        onClick={() => handleRowClick(data)}
+                      >
                         {new Intl.DateTimeFormat("en-US", {
                           weekday: "long",
                           month: "short",
@@ -146,7 +197,7 @@ const WeatherTabs: React.FC<WeatherTabsProps> = ({
           </Tab>
         </Tabs>
       </div>
-  
+
       {showDetails && hideTable && selectedData && coordinates && (
         <div className="details-content">
           <WeatherDetails
@@ -154,8 +205,11 @@ const WeatherTabs: React.FC<WeatherTabsProps> = ({
             weatherData={selectedData}
             latitude={parseFloat(coordinates.latitude)}
             longitude={parseFloat(coordinates.longitude)}
-            googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY"
+            googleMapsApiKey="AIzaSyD9SRVSolqPEYTy7s4fCYSTLw7wbZMEz6M" // replace with your actual API key
             onBackToList={handleBackToList}
+            cityName={cityName} // Use state value directly
+            regionName={regionName} // Use state value directly
+            temperature={selectedData.maxTemp} // Assuming maxTemp represents temperature here
           />
         </div>
       )}
