@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Tabs, Tab, Container, Spinner, Alert } from "react-bootstrap";
+import { Tabs, Tab, Container, ProgressBar, Alert } from "react-bootstrap";
 import WeatherSearchForm from "./WeatherSearchForm";
 import WeatherTabs from "./WeatherTabs";
 import FavoriteTable from "./FavoriteTable";
@@ -21,13 +21,14 @@ interface WeatherData {
 interface FavoriteData {
   cityName: string;
   region: string;
-  coordinates: { latitude: string; longitude: string } | null; // Added coordinates
+  coordinates: { latitude: string; longitude: string } | null;
   data: WeatherData[];
 }
 
 const WeatherApp: React.FC = () => {
   const [weatherData, setWeatherData] = useState<WeatherData[]>([]);
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0); // Progress state for the progress bar
   const [error, setError] = useState<string | null>(null);
   const [coordinates, setCoordinates] = useState<{
     latitude: string;
@@ -69,6 +70,12 @@ const WeatherApp: React.FC = () => {
     if (lat && long) {
       setLoading(true);
       setError(null);
+      setProgress(0); // Reset progress for a new search
+
+      const progressInterval = setInterval(() => {
+        setProgress((prev) => (prev < 100 ? prev + 20 : 100)); // Simulate progress
+      }, 300);
+
       try {
         const response = await fetch(`/api/weather?lat=${lat}&long=${long}`);
         if (!response.ok) throw new Error("Network response was not ok");
@@ -105,10 +112,12 @@ const WeatherApp: React.FC = () => {
         setCoordinates({ latitude: lat, longitude: long });
         setHasSearched(true);
         setActiveTab("results");
+        setProgress(100); // Complete the progress bar on success
       } catch (error) {
         console.error("Error fetching weather data:", error);
         setError("Failed to fetch weather data. Please try again.");
       } finally {
+        clearInterval(progressInterval);
         setLoading(false);
       }
     } else {
@@ -196,8 +205,6 @@ const WeatherApp: React.FC = () => {
     setWeatherData(favorite.data);
     setHasSearched(true);
     setCoordinates(favorite.coordinates);
-    console.log(favorite);
-
     setActiveTab("results");
   };
 
@@ -216,9 +223,7 @@ const WeatherApp: React.FC = () => {
         <Tab eventKey="results" title="Results">
           {loading ? (
             <div className="text-center my-3">
-              <Spinner animation="border" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>
+              <ProgressBar now={progress} label={`${progress}%`} animated />
             </div>
           ) : error ? (
             <Alert variant="danger" className="text-center">
