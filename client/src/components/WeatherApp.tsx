@@ -218,7 +218,7 @@ const WeatherApp: React.FC = () => {
       <Tabs
         activeKey={activeTab}
         onSelect={(k) => setActiveTab(k || "results")}
-        className="mt-4"
+        className="mt-4 d-flex flex-row align-items-center justify-content-center"
       >
         <Tab eventKey="results" title="Results">
           {loading ? (

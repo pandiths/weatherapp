@@ -138,7 +138,7 @@ const WeatherTabs: React.FC<WeatherTabsProps> = ({
         <h3 className="mb-3">
           Weather Forecast {cityName ? `for ${cityName}, ${regionName}` : ""}
         </h3>
-        <Row className="mb-3">
+        <Row className="mb-3 justify-content-end">
           <Col xs="auto">
             <Button
               variant="light"
@@ -158,11 +158,11 @@ const WeatherTabs: React.FC<WeatherTabsProps> = ({
           </Col>
           <Col xs="auto">
             <Button
-              variant="secondary"
+              variant="light"
               className="d-flex align-items-center justify-content-center"
               onClick={handleMoreDetailsClick}
             >
-              More Details
+               Details
               <span className="material-symbols-outlined">chevron_right</span>
             </Button>
           </Col>

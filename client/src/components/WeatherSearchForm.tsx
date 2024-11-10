@@ -157,7 +157,6 @@ const WeatherSearchForm: React.FC<WeatherSearchFormProps> = ({
             type="text"
             className="mx-2 w-50"
             name="street"
-            placeholder="Enter street"
             value={formData.street}
             onChange={handleInputChange}
             disabled={currentLocationEnabled}
@@ -176,7 +175,6 @@ const WeatherSearchForm: React.FC<WeatherSearchFormProps> = ({
             type="text"
             className="mx-2 w-50"
             name="city"
-            placeholder="Enter city"
             value={formData.city}
             onChange={handleInputChange}
             isInvalid={errors.city}
@@ -213,7 +211,9 @@ const WeatherSearchForm: React.FC<WeatherSearchFormProps> = ({
         <hr />
 
         <Form.Group className="d-flex flex-row justify-content-center align-items-center">
-          <p>Autodetect Location</p>
+          <p>
+            Autodetect Location <sup style={{ color: "red" }}>*</sup>{" "}
+          </p>
           <Form.Check
             type="checkbox"
             name="currentLocation"
@@ -236,10 +236,10 @@ const WeatherSearchForm: React.FC<WeatherSearchFormProps> = ({
           </Button>
           <Button
             type="reset"
-            variant="secondary"
+            variant="light"
             className="d-flex align-items-center justify-content-center mx-2"
           >
-           <span className="material-symbols-outlined me-2">clear_all</span>
+            <span className="material-symbols-outlined me-2">clear_all</span>
             Clear
           </Button>
         </div>
