@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, Tab, Container, Table, Button, Row, Col } from "react-bootstrap";
 import WeatherDetails from "./WeatherDetails";
+import TemperatureChart from "./TemperatureChart";
 
 interface WeatherData {
   date: string;
@@ -190,7 +191,7 @@ const WeatherTabs: React.FC<WeatherTabsProps> = ({
             </Table>
           </Tab>
           <Tab eventKey="dailyTempChart" title="Daily Temp. Chart">
-            <div>Temperature chart will be displayed here.</div>
+            <TemperatureChart data={weatherData} />
           </Tab>
           <Tab eventKey="meteogram" title="Meteogram">
             <div>Meteogram data will be displayed here.</div>
