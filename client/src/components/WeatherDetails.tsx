@@ -74,15 +74,20 @@ const WeatherDetails: React.FC<WeatherDetailsProps> = ({
     <Container className="mt-4">
       <Row className="justify-content-between align-items-center mb-3">
         <Col xs="auto">
-          <Button variant="outline-secondary" onClick={onBackToList}>
+          <Button
+            className="d-flex align-items-center justify-content-center"
+            variant="outline-secondary"
+            onClick={onBackToList}
+          >
+            <span className="material-symbols-outlined">chevron_left</span>
             Back to List
           </Button>
         </Col>
         <Col xs="auto" className="text-center">
           <h4 className="m-0">
             {formatDate(date)}
-            <Button onClick={tweetWeatherDetails} variant="primary">
-              Share on X
+            <Button onClick={tweetWeatherDetails} variant="light">
+              X
             </Button>
           </h4>
         </Col>
