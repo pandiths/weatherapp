@@ -247,7 +247,7 @@ const WeatherApp: React.FC = () => {
 
         <Tab eventKey="favorites" title="Favorites">
           {favorites.length === 0 ? (
-            <div className="text-center p-3">No favorites added yet.</div>
+            <div className="text-center p-3">Sorry No Record Found.</div>
           ) : (
             <FavoriteTable
               favorites={favorites}
