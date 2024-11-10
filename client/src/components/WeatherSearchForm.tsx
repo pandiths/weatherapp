@@ -228,12 +228,18 @@ const WeatherSearchForm: React.FC<WeatherSearchFormProps> = ({
           <Button
             type="submit"
             variant="primary"
-            className="me-2"
+            className="d-flex align-items-center justify-content-center"
             disabled={!isFormValid}
           >
+            <span className="material-symbols-outlined me-2">search</span>
             Search
           </Button>
-          <Button type="reset" variant="secondary">
+          <Button
+            type="reset"
+            variant="secondary"
+            className="d-flex align-items-center justify-content-center mx-2"
+          >
+           <span className="material-symbols-outlined me-2">clear_all</span>
             Clear
           </Button>
         </div>

@@ -140,13 +140,30 @@ const WeatherTabs: React.FC<WeatherTabsProps> = ({
         </h3>
         <Row className="mb-3">
           <Col xs="auto">
-            <Button variant="primary" onClick={handleFavoriteClick}>
-              {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+            <Button
+              variant="light"
+              onClick={handleFavoriteClick}
+              className="d-flex align-items-center justify-content-center"
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  color: isFavorite ? "yellow" : "inherit", // Yellow color for filled star
+                  fontSize: "24px", // Optional, adjust the size as needed
+                }}
+              >
+                {isFavorite ? "star" : "star_border"}
+              </span>
             </Button>
           </Col>
           <Col xs="auto">
-            <Button variant="secondary" onClick={handleMoreDetailsClick}>
+            <Button
+              variant="secondary"
+              className="d-flex align-items-center justify-content-center"
+              onClick={handleMoreDetailsClick}
+            >
               More Details
+              <span className="material-symbols-outlined">chevron_right</span>
             </Button>
           </Col>
         </Row>
