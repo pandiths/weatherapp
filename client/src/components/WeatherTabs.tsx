@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Tabs, Tab, Container, Table, Button, Row, Col } from "react-bootstrap";
 import WeatherDetails from "./WeatherDetails";
 import TemperatureChart from "./TemperatureChart";
+import Meteogram from "./MeteogramChart";
 
 interface WeatherData {
   date: string;
@@ -16,7 +17,19 @@ interface WeatherData {
   visibility: string;
   cloudCover: string;
 }
-
+interface HourlyWeatherData {
+  date: string;
+  status: string;
+  maxTemp: string;
+  minTemp: string;
+  apparentTemp: string;
+  sunrise: string;
+  sunset: string;
+  humidity: string;
+  windSpeed: string;
+  visibility: string;
+  cloudCover: string;
+}
 interface FavoriteData {
   cityName: string;
   region: string;
@@ -26,6 +39,7 @@ interface FavoriteData {
 
 interface WeatherTabsProps {
   weatherData: WeatherData[];
+  hourlyData: HourlyWeatherData[];
   favorites: FavoriteData[];
   coordinates?: { latitude: string; longitude: string } | null;
   onDateClick: (data: WeatherData) => void;
@@ -43,6 +57,7 @@ interface WeatherTabsProps {
 
 const WeatherTabs: React.FC<WeatherTabsProps> = ({
   weatherData,
+  hourlyData,
   favorites,
   coordinates,
   onDateClick,
@@ -50,6 +65,7 @@ const WeatherTabs: React.FC<WeatherTabsProps> = ({
   onRemoveFavorite,
 }) => {
   const [selectedData, setSelectedData] = useState<WeatherData | null>(null);
+  const [hourly, setHourly] = useState<WeatherData | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [hideTable, setHideTable] = useState(false);
   const [cityName, setCityName] = useState<string>("");
@@ -211,11 +227,11 @@ const WeatherTabs: React.FC<WeatherTabsProps> = ({
             <TemperatureChart data={weatherData} />
           </Tab>
           <Tab eventKey="meteogram" title="Meteogram">
-            <div>Meteogram data will be displayed here.</div>
+            <div><Meteogram data={hourlyData}/></div>
           </Tab>
         </Tabs>
       </div>
-
+        {/* <TemperatureChart data={weatherData}/> for debug*/ }
       {showDetails && hideTable && selectedData && coordinates && (
         <div className="details-content">
           <WeatherDetails
