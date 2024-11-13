@@ -76,8 +76,8 @@ app.delete('/api/favorites', async (req, res) => {
 // Existing weather API route
 app.get('/api/weather', async (req, res) => {
   const { lat, long } = req.query;
-  const apiKey = "hLW5w3nqhwrbf2YT6IZVsUHNvrkoz90Z";
-  // const apiKey="Y2SjVrteA6vG8JwCUCq2B5NGd56XvzIi"
+  // const apiKey = "hLW5w3nqhwrbf2YT6IZVsUHNvrkoz90Z";
+  const apiKey="Y2SjVrteA6vG8JwCUCq2B5NGd56XvzIi"
   const url = `https://api.tomorrow.io/v4/timelines?location=${lat},${long}&fields=temperature,temperatureApparent,temperatureMin,temperatureMax,windSpeed,humidity,sunriseTime,sunsetTime,visibility,cloudCover&units=imperial&timesteps=1d&apikey=${apiKey}`;
 
   try {
@@ -94,8 +94,8 @@ app.get('/api/weather', async (req, res) => {
 });
 app.get('/api/hourly', async (req, res) => {
   const { lat, long } = req.query;
-  // const apiKey = "Y2SjVrteA6vG8JwCUCq2B5NGd56XvzIi";
-  const apiKey = "hLW5w3nqhwrbf2YT6IZVsUHNvrkoz90Z";
+  const apiKey = "Y2SjVrteA6vG8JwCUCq2B5NGd56XvzIi";
+  // const apiKey = "hLW5w3nqhwrbf2YT6IZVsUHNvrkoz90Z";
   const url = `https://api.tomorrow.io/v4/timelines?location=${lat},${long}&fields=temperature,pressureSurfaceLevel,temperatureApparent,temperatureMin,temperatureMax,windSpeed,windDirection,humidity,pressureSeaLevel,uvIndex,weatherCode,precipitationProbability,precipitationType,visibility,cloudCover&endTime=nowPlus5d&timezone=America/Los_Angeles&units=imperial&timesteps=1h&apikey=${apiKey}`;
 
   try {
