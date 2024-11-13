@@ -253,7 +253,7 @@ const WeatherSearchForm: React.FC<WeatherSearchFormProps> = ({
           </div>
         </Form.Group>
 
-        <Form.Group className="d-flex flex-row justify-content-center align-items-center mt-5">
+        <Form.Group className="d-flex flex-row justify-content-center align-items-center mt-2">
           <Form.Label>
             City<span className="text-danger">*</span>
           </Form.Label>
@@ -273,7 +273,7 @@ const WeatherSearchForm: React.FC<WeatherSearchFormProps> = ({
           </div>
         </Form.Group>
 
-        <Form.Group className="d-flex flex-row justify-content-center align-items-center mt-5">
+        <Form.Group className="d-flex flex-row justify-content-center align-items-center mt-2">
           <Form.Label>
             State<span className="text-danger">*</span>
           </Form.Label>
@@ -293,7 +293,7 @@ const WeatherSearchForm: React.FC<WeatherSearchFormProps> = ({
           </div>
         </Form.Group>
 
-        <Form.Group>
+        <Form.Group className="d-flex flex-row justify-content-center align-items-center ">
           <Form.Check
             type="checkbox"
             label="Use current location"
@@ -308,7 +308,7 @@ const WeatherSearchForm: React.FC<WeatherSearchFormProps> = ({
             className="btn btn-primary w-50"
             disabled={!isFormValid}
           >
-            Submit
+            Search
           </Button>
         </div>
       </Form>
