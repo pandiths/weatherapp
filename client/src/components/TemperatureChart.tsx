@@ -1,5 +1,4 @@
-// @ts-nocheck
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import HC_exporting from "highcharts/modules/exporting";
@@ -7,22 +6,28 @@ import HC_data from "highcharts/modules/data";
 import HighchartsMore from "highcharts/highcharts-more";
 
 // Initialize modules
-HighchartsMore(Highcharts); // Initializes highcharts-more
-
+HighchartsMore(Highcharts);
 HC_exporting(Highcharts);
 HC_data(Highcharts);
 
-const TemperatureChart: React.FC<{
-  data: { date: string; maxTemp: string; minTemp: string }[];
-}> = ({ data }) => {
-  const chartsData = data.map(({ date, minTemp, maxTemp }) => [
-    date,
-    minTemp,
-    maxTemp,
-  ]);
-  console.log(chartsData);
+interface WeatherData {
+  date: string;
+  maxTemp: string;
+  minTemp: string;
+}
+
+interface MeteogramProps {
+  data: WeatherData[];
+}
+
+const Meteogram: React.FC<MeteogramProps> = ({ data }) => {
+  const chartData = data.map(({ date, minTemp, maxTemp }) => ({
+    x: new Date(date).getTime(),
+    low: parseFloat(minTemp),
+    high: parseFloat(maxTemp),
+  }));
+
   const options: Highcharts.Options = {
-    data: chartsData,
     chart: {
       type: "arearange",
       zooming: {
@@ -34,32 +39,54 @@ const TemperatureChart: React.FC<{
       },
     },
     title: {
-      text: "Temperature variation by day",
+      text: "Temperature Variation by Day",
       align: "left",
+      style: {
+        color: "#333",
+      },
     },
     subtitle: {
-      text:
-        "Source: " +
-        '<a href="https://veret.gfi.uib.no/"' +
-        'target="_blank">Universitetet i Bergen</a>',
+      text: "Source: <a href='https://veret.gfi.uib.no/' target='_blank'>Universitetet i Bergen</a>",
       align: "left",
     },
     xAxis: {
       type: "datetime",
       crosshair: true,
-      accessibility: {
-        rangeDescription: "Range: Jan 1st 2023 to Jan 1st 2024.",
+      labels: {
+        formatter: function () {
+          const date = new Date(this.value as number);
+          const day = date.getDate();
+          const month = date.toLocaleString("default", { month: "short" });
+          return `${day} ${month}`;
+        },
+        style: {
+          color: "#777",
+        },
+      },
+      title: {
+        text: "Date",
+        style: {
+          color: "#444",
+        },
       },
     },
     yAxis: {
       title: {
-        text: null,
+        text: "Temperature (°C)",
+        style: {
+          color: "#444",
+        },
+      },
+      labels: {
+        style: {
+          color: "#777",
+        },
       },
     },
     tooltip: {
       shared: true,
       valueSuffix: "°C",
-      xDateFormat: "%A, %b %e",
+      xDateFormat: "%e %b",
     },
     legend: {
       enabled: false,
@@ -76,18 +103,11 @@ const TemperatureChart: React.FC<{
             y2: 1,
           },
           stops: [
-            [0, "#ff0000"],
-            [1, "#0000ff"],
+            [0, "#f1b036"],
+            [1, "#d6d3c3"],
           ],
         },
-        data: chartsData
-          ? chartsData.map((point) => ({
-              x: point[0],
-              low: point[1],
-              high: point[2],
-              color: "#0000ff",
-            }))
-          : [], // Leave data empty, as it will load from the CSV URL
+        data: chartData,
       },
     ],
   };
@@ -95,4 +115,4 @@ const TemperatureChart: React.FC<{
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 };
 
-export default TemperatureChart;
+export default Meteogram;

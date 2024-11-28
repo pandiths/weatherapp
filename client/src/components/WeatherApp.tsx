@@ -3,6 +3,7 @@ import { Tabs, Tab, Container, ProgressBar, Alert } from "react-bootstrap";
 import WeatherSearchForm from "./WeatherSearchForm";
 import WeatherTabs from "./WeatherTabs";
 import FavoriteTable from "./FavoriteTable";
+import { fetchData } from "./apicalls/hourlyData";
 
 interface WeatherData {
   date: string;
@@ -17,7 +18,19 @@ interface WeatherData {
   visibility: string;
   cloudCover: string;
 }
-
+interface HourlyWeatherData {
+  date: string;
+  status: string;
+  maxTemp: string;
+  minTemp: string;
+  apparentTemp: string;
+  sunrise: string;
+  sunset: string;
+  humidity: string;
+  windSpeed: string;
+  visibility: string;
+  cloudCover: string;
+}
 interface FavoriteData {
   cityName: string;
   region: string;
@@ -27,6 +40,7 @@ interface FavoriteData {
 
 const WeatherApp: React.FC = () => {
   const [weatherData, setWeatherData] = useState<WeatherData[]>([]);
+  const [hourlyData, setHourlyData] = useState<HourlyWeatherData[]>([]);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0); // Progress state for the progress bar
   const [error, setError] = useState<string | null>(null);
@@ -67,16 +81,18 @@ const WeatherApp: React.FC = () => {
     const lat = coordinates?.latitude || data.latitude;
     const long = coordinates?.longitude || data.longitude;
 
+    
     if (lat && long) {
       setLoading(true);
       setError(null);
       setProgress(0); // Reset progress for a new search
-
+      
       const progressInterval = setInterval(() => {
         setProgress((prev) => (prev < 100 ? prev + 20 : 100)); // Simulate progress
       }, 300);
-
+      
       try {
+        fetchData(lat,long,setHourlyData)
         const response = await fetch(`/api/weather?lat=${lat}&long=${long}`);
         if (!response.ok) throw new Error("Network response was not ok");
 
@@ -236,6 +252,7 @@ const WeatherApp: React.FC = () => {
           ) : (
             <WeatherTabs
               weatherData={weatherData}
+              hourlyData={hourlyData}
               favorites={favorites}
               coordinates={coordinates}
               onDateClick={setSelectedData}
